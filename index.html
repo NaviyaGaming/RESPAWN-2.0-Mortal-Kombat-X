@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortal Kombat X — Player Selection Tracker</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+<style>
+  :root {
+    --bg-page: #0f1115;
+    --surface-0: #14161c;
+    --surface-1: #1b1e26;
+    --surface-2: #21242e;
+    --border: #2c3040;
+    --border-strong: #3a3f52;
+    --text-primary: #f2f3f7;
+    --text-secondary: #a3a8ba;
+    --text-muted: #6b7080;
+    --accent: #8B0000;
+    --accent-light: #c23b3b;
+    --text-success: #4ade80;
+    --bg-success: rgba(74,222,128,0.12);
+    --border-success: rgba(74,222,128,0.35);
+    --text-danger: #f87171;
+    --bg-danger: rgba(248,113,113,0.12);
+    --border-danger: rgba(248,113,113,0.35);
+    --text-warning: #fbbf24;
+    --bg-warning: rgba(251,191,36,0.12);
+    --border-warning: rgba(251,191,36,0.35);
+    --radius: 10px;
+    --gold: #FAC775;
+    --silver: #C7CAD1;
+    --bronze: #F0997B;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: radial-gradient(circle at top, #1a1c24 0%, var(--bg-page) 60%);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 2.5rem 1rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container { width: 100%; max-width: 880px; }
+
+  .masthead {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .masthead .kicker {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .masthead h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    background: linear-gradient(180deg, #fff, #c9cbd4);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .masthead .sub {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+  }
+
+  .panel {
+    background: var(--surface-0);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 1.75rem;
+  }
+  .stat-card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.9rem 1rem;
+    text-align: center;
+  }
+  .stat-label {
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .stat-val {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 1.5rem 0 0.9rem;
+  }
+  .section-title i { color: var(--accent-light); font-size: 15px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+
+  #standings-table thead th {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 8px 6px;
+    border-bottom: 1px solid var(--border-strong);
+  }
+  #standings-table thead th.left { text-align: left; padding-left: 10px; }
+
+  #standings-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  #standings-table tbody tr:last-child { border-bottom: none; }
+  #standings-table tbody td {
+    padding: 10px 6px;
+    text-align: center;
+    color: var(--text-primary);
+    vertical-align: middle;
+  }
+  #standings-table tbody td.name-cell {
+    text-align: left;
+    padding-left: 10px;
+    font-weight: 600;
+  }
+
+  .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    margin-right: 8px;
+  }
+  .rank-1 { background: var(--gold); color: #4a2e02; }
+  .rank-2 { background: var(--silver); color: #2c2c2c; }
+  .rank-3 { background: var(--bronze); color: #4a1b0c; }
+  .rank-other { background: var(--surface-2); color: var(--text-secondary); border: 1px solid var(--border); }
+
+  tr.selected { background: var(--bg-success); }
+  tr.selected td { color: var(--text-success); }
+
+  .status-qualified {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-success);
+  }
+  .status-pending { font-size: 12px; color: var(--text-muted); }
+
+  .matchup-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .matchup-table th, .matchup-table td {
+    padding: 8px; border: 1px solid var(--border); text-align: center;
+  }
+  .matchup-table th {
+    background: var(--surface-1);
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .cell-self { background: var(--surface-2); color: var(--text-muted); }
+
+  .legend {
+    display: flex; gap: 18px; font-size: 12px; color: var(--text-secondary);
+    margin-bottom: 1rem; flex-wrap: wrap;
+  }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .dot-w { background: var(--text-success); }
+  .dot-d { background: var(--text-warning); }
+  .dot-l { background: var(--text-danger); }
+
+  .result-btn {
+    width: 36px; height: 32px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--surface-2);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    transition: all 0.12s ease;
+  }
+  .result-btn:hover { border-color: var(--accent-light); transform: translateY(-1px); }
+  .result-btn.win { background: var(--bg-success); color: var(--text-success); border-color: var(--border-success); }
+  .result-btn.loss { background: var(--bg-danger); color: var(--text-danger); border-color: var(--border-danger); }
+  .result-btn.draw { background: var(--bg-warning); color: var(--text-warning); border-color: var(--border-warning); }
+
+  .qualified-bar {
+    background: var(--bg-success);
+    border: 1px solid var(--border-success);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--text-success);
+    margin-top: 1.25rem;
+    display: none;
+    align-items: center;
+    gap: 8px;
+  }
+  .qualified-bar.show { display: flex; }
+  .qualified-bar i { font-size: 18px; }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+  }
+  .reset-btn {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--surface-1);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 8px 16px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+  .reset-btn:hover { background: var(--surface-2); border-color: var(--accent-light); color: var(--text-primary); }
+
+  footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 1.75rem;
+  }
+
+  @media (max-width: 560px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .panel { padding: 1.25rem; }
+    #standings-table { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="masthead">
+    <div class="kicker">RESPAWN 2.0 · Mortal Kombat X</div>
+    <h1>Player Selection Tracker</h1>
+    <p class="sub">Round-robin qualifier · 5 players compete for 3 spots</p>
+  </div>
+
+  <div class="panel">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Total matches</div><div class="stat-val" id="s-total">10</div></div>
+      <div class="stat-card"><div class="stat-label">Played</div><div class="stat-val" id="s-played">0</div></div>
+      <div class="stat-card"><div class="stat-label">Remaining</div><div class="stat-val" id="s-remaining">10</div></div>
+      <div class="stat-card"><div class="stat-label">Qualified</div><div class="stat-val" id="s-qualified">0 / 3</div></div>
+    </div>
+
+    <div class="section-title"><i class="ti ti-trophy"></i>Standings</div>
+    <table id="standings-table">
+      <thead>
+        <tr>
+          <th class="left">#&nbsp;&nbsp;Player</th>
+          <th>W</th><th>D</th><th>L</th>
+          <th>Round W</th>
+          <th>Pts</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="standings-body"></tbody>
+    </table>
+
+    <div class="section-title"><i class="ti ti-swords"></i>Match grid — click a cell to record result</div>
+    <div class="legend">
+      <span><span class="dot dot-w"></span>Win (3 pts)</span>
+      <span><span class="dot dot-d"></span>Draw (1 pt each)</span>
+      <span><span class="dot dot-l"></span>Loss (0 pts)</span>
+    </div>
+    <table class="matchup-table" id="match-grid"></table>
+
+    <div class="qualified-bar" id="qualified-bar"></div>
+
+    <div class="actions">
+      <button class="reset-btn" onclick="resetAll()"><i class="ti ti-refresh"></i>Reset all results</button>
+    </div>
+  </div>
+
+  <footer>RESPAWN 2.0 &mdash; Mortal Kombat X Player Selection &middot; Tap a grid cell repeatedly to cycle Win &rarr; Draw &rarr; Loss &rarr; Clear</footer>
+</div>
+
+<script>
+const PLAYERS = ["Player 1","Player 2","Player 3","Player 4","Player 5"];
+const N = PLAYERS.length;
+let results = {};
+let roundWins = {};
+
+function key(a,b){ return a<b?a+':'+b:b+':'+a; }
+
+function getResult(a,b){
+  const k=key(a,b);
+  if(!results[k]) return null;
+  return results[k][a];
+}
+
+function setResult(a,b,resForA){
+  const k=key(a,b);
+  if(!results[k]) results[k]={};
+  if(resForA==='W'){ results[k][a]='W'; results[k][b]='L'; }
+  else if(resForA==='L'){ results[k][a]='L'; results[k][b]='W'; }
+  else { results[k][a]='D'; results[k][b]='D'; }
+}
+
+function clearResult(a,b){
+  const k=key(a,b);
+  delete results[k];
+}
+
+function calcStats(){
+  const stats={};
+  PLAYERS.forEach(p=>{ stats[p]={w:0,d:0,l:0,pts:0,rw:0}; });
+  PLAYERS.forEach((a,ai)=>{
+    PLAYERS.forEach((b,bi)=>{
+      if(ai>=bi) return;
+      const k=key(a,b);
+      if(!results[k]) return;
+      const ra=results[k][a];
+      if(ra==='W'){ stats[a].w++; stats[a].pts+=3; stats[b].l++; }
+      else if(ra==='L'){ stats[b].w++; stats[b].pts+=3; stats[a].l++; }
+      else { stats[a].d++; stats[a].pts+=1; stats[b].d++; stats[b].pts+=1; }
+    });
+  });
+  Object.keys(roundWins).forEach(p=>{ if(stats[p]) stats[p].rw=roundWins[p]||0; });
+  return stats;
+}
+
+function countPlayed(){
+  let played=0;
+  PLAYERS.forEach((a,ai)=>{ PLAYERS.forEach((b,bi)=>{ if(ai<bi && results[key(a,b)]) played++; }); });
+  return played;
+}
+
+function renderStandings(stats){
+  const sorted=PLAYERS.slice().sort((a,b)=>{
+    if(stats[b].pts!==stats[a].pts) return stats[b].pts-stats[a].pts;
+    if(stats[b].w!==stats[a].w) return stats[b].w-stats[a].w;
+    return stats[b].rw-stats[a].rw;
+  });
+  const tbody=document.getElementById('standings-body');
+  tbody.innerHTML='';
+  sorted.forEach((p,i)=>{
+    const rank=i+1;
+    const qualified=rank<=3;
+    const s=stats[p];
+    const tr=document.createElement('tr');
+    if(qualified) tr.className='selected';
+    tr.innerHTML=`
+      <td class="name-cell"><span class="rank-badge rank-${rank<=3?rank:'other'}">${rank}</span>${p}</td>
+      <td>${s.w}</td>
+      <td>${s.d}</td>
+      <td>${s.l}</td>
+      <td>${s.rw}</td>
+      <td><strong>${s.pts}</strong></td>
+      <td>${qualified?'<span class="status-qualified"><i class="ti ti-check"></i>Qualified</span>':'<span class="status-pending">&mdash;</span>'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderGrid(){
+  const grid=document.getElementById('match-grid');
+  let html='<tr><th></th>';
+  PLAYERS.forEach(p=>{ html+=`<th>${p.replace('Player ','P')}</th>`; });
+  html+='</tr>';
+  PLAYERS.forEach((a,ai)=>{
+    html+=`<tr><th style="text-align:left;padding-left:10px">${a.replace('Player ','P')}</th>`;
+    PLAYERS.forEach((b,bi)=>{
+      if(ai===bi){ html+='<td class="cell-self">&mdash;</td>'; return; }
+      const r=getResult(a,b);
+      let cls=''; 
+      if(r==='W'){ cls='win'; }
+      else if(r==='L'){ cls='loss'; }
+      else if(r==='D'){ cls='draw'; }
+      html+=`<td><button class="result-btn ${cls}" onclick="cycleResult('${a}','${b}')">${r||'&middot;'}</button></td>`;
+    });
+    html+='</tr>';
+  });
+  grid.innerHTML=html;
+}
+
+function cycleResult(a,b){
+  const cur=getResult(a,b);
+  if(cur===null){ setResult(a,b,'W'); }
+  else if(cur==='W'){ setResult(a,b,'D'); }
+  else if(cur==='D'){ setResult(a,b,'L'); }
+  else { clearResult(a,b); }
+  render();
+}
+
+function render(){
+  const stats=calcStats();
+  const played=countPlayed();
+  const total=N*(N-1)/2;
+  document.getElementById('s-total').textContent=total;
+  document.getElementById('s-played').textContent=played;
+  document.getElementById('s-remaining').textContent=total-played;
+  renderStandings(stats);
+  renderGrid();
+
+  const sorted=PLAYERS.slice().sort((a,b)=>stats[b].pts-stats[a].pts||stats[b].w-stats[a].w);
+  document.getElementById('s-qualified').textContent=(played===total?'3':'?')+' / 3';
+
+  const bar=document.getElementById('qualified-bar');
+  if(played===total){
+    bar.className='qualified-bar show';
+    bar.innerHTML=`<i class="ti ti-trophy"></i><span><strong>Selection complete!</strong> Qualified players: <strong>${sorted[0]}</strong>, <strong>${sorted[1]}</strong>, <strong>${sorted[2]}</strong></span>`;
+  } else {
+    bar.className='qualified-bar';
+  }
+}
+
+function resetAll(){
+  results={};
+  roundWins={};
+  render();
+}
+
+render();
+</script>
+
+</body>
+</html>
