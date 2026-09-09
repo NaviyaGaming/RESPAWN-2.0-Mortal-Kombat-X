@@ -4,7 +4,7 @@ An interactive, single-file web app for running a round-robin qualifier to selec
 
 Built for the IEEE Student Branch & Computer Society Student Branch esports selection process.
 
-**[Live demo →](#)** *(replace with your GitHub Pages URL once deployed — see below)*
+**[Live demo →](#)** *(https://naviyagaming.github.io/RESPAWN-2.0-Mortal-Kombat-X/)*
 
 ---
 
