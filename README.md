@@ -1,6 +1,6 @@
 # RESPAWN 2.0 — Mortal Kombat X Player Selection Tracker
 
-An interactive, single-file web app for running a round-robin qualifier to select the top 3 players (from a pool of 5) to compete in the RESPAWN 2.0 Mortal Kombat X esports event.
+An interactive, single-file web app created by Navindu Vishvanath for running a round-robin qualifier to select the top 3 players (from a pool of 5) to compete in the RESPAWN 2.0 Mortal Kombat X esports event.
 
 Built for the IEEE Student Branch & Computer Society Student Branch esports selection process.
 
