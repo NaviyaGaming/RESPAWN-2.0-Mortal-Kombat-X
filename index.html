@@ -4,11 +4,11 @@
   <meta name="google-site-verification" content="QWKnvQjIcXNuHl6FEQauJtoyaisu15p7AhEaMc9O-Ao" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Mortal Kombat X — Player Selection Tracker</title>
-<meta name="description" content="Mortal Kombat 11 player selection tracker built by Navindu for the RESPAWN 2.0 esports event — round-robin qualifier to pick the top 3 players.">
+<title>Mortal Kombat 11 — Player Selection Tracker</title>
+<meta name="description" content="Mortal Kombat 11 player selection tracker built by Navindu for the RESPAWN 2.0 esports event — round-robin qualifier to pick the top players.">
 <meta name="author" content="Navindu">
 <meta property="og:title" content="Mortal Kombat 11 — Player Selection Tracker by Navindu">
-<meta property="og:description" content="Interactive round-robin selection tracker for RESPAWN 2.0 Mortal Kombat X esports event.">
+<meta property="og:description" content="Interactive round-robin selection tracker for RESPAWN 2.0 Mortal Kombat 11 esports event.">
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
 <style>
@@ -89,8 +89,100 @@
     border-radius: 16px;
     padding: clamp(1rem, 4vw, 1.75rem);
     box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    margin-bottom: 1.25rem;
   }
 
+  /* ── Player management ─────────────────────────── */
+  .player-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+  .player-input {
+    flex: 1;
+    min-width: 0;
+    background: var(--surface-1);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .player-input::placeholder { color: var(--text-muted); }
+  .player-input:focus { border-color: var(--accent-light); }
+  .add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent);
+    color: #fff;
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+    touch-action: manipulation;
+  }
+  .add-btn:hover { background: var(--accent-light); border-color: var(--accent-light); }
+  .add-btn:active { transform: scale(0.97); }
+
+  .player-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 0.25rem;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 8px 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .chip button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: none;
+    background: var(--surface-2);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1;
+    transition: all 0.15s;
+    touch-action: manipulation;
+  }
+  .chip button:hover { background: var(--bg-danger); color: var(--text-danger); }
+
+  .form-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    min-height: 16px;
+  }
+  .form-hint.error { color: var(--text-danger); }
+
+  .empty-state {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--text-muted);
+    font-size: 13.5px;
+  }
+  .empty-state i { font-size: 28px; display: block; margin-bottom: 10px; color: var(--text-muted); }
+
+  /* ── Stats & sections ───────────────────────────── */
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -132,11 +224,23 @@
     letter-spacing: 0.06em;
     margin: clamp(1.1rem, 4vw, 1.5rem) 0 0.9rem;
   }
+  .section-title:first-child { margin-top: 0; }
   .section-title i { color: var(--accent-light); font-size: 15px; flex-shrink: 0; }
+  .section-title .count-badge {
+    margin-left: auto;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 9px;
+    border-radius: 999px;
+    text-transform: none;
+    letter-spacing: 0;
+  }
 
   table { width: 100%; border-collapse: collapse; font-size: 14px; }
 
-  /* Standings: scrolls horizontally on very small screens instead of squashing */
   .table-scroll {
     width: 100%;
     overflow-x: auto;
@@ -271,6 +375,7 @@
     display: flex;
     justify-content: flex-end;
     margin-top: 1.25rem;
+    gap: 8px;
   }
   .reset-btn {
     font-size: 13px;
@@ -304,6 +409,8 @@
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
     .panel { padding: 1.1rem; border-radius: 14px; }
     .section-title { margin-top: 1.25rem; }
+    .player-form { flex-direction: column; }
+    .add-btn { justify-content: center; }
   }
 
   @media (max-width: 400px) {
@@ -323,47 +430,40 @@
   <div class="masthead">
     <div class="kicker">RESPAWN 2.0 · Mortal Kombat 11</div>
     <h1>Player Selection Tracker</h1>
-    <p class="sub">Round-robin qualifier · 5 players compete for 3 spots</p>
+    <p class="sub">Round-robin qualifier · top players advance based on points</p>
   </div>
 
+  <!-- ── Player management panel ────────────────────── -->
   <div class="panel">
+    <div class="section-title"><i class="ti ti-users"></i>Players<span class="count-badge" id="player-count-badge">0</span></div>
+
+    <div class="player-form">
+      <input type="text" class="player-input" id="player-input" placeholder="Enter player name…" maxlength="30">
+      <button class="add-btn" onclick="addPlayer()"><i class="ti ti-plus"></i>Add Player</button>
+    </div>
+    <div class="form-hint" id="form-hint"></div>
+
+    <div class="player-chips" id="player-chips"></div>
+  </div>
+
+  <!-- ── Tracker panel ───────────────────────────────── -->
+  <div class="panel" id="tracker-panel">
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-label">Total matches</div><div class="stat-val" id="s-total">10</div></div>
+      <div class="stat-card"><div class="stat-label">Total matches</div><div class="stat-val" id="s-total">0</div></div>
       <div class="stat-card"><div class="stat-label">Played</div><div class="stat-val" id="s-played">0</div></div>
-      <div class="stat-card"><div class="stat-label">Remaining</div><div class="stat-val" id="s-remaining">10</div></div>
-      <div class="stat-card"><div class="stat-label">Qualified</div><div class="stat-val" id="s-qualified">0 / 3</div></div>
+      <div class="stat-card"><div class="stat-label">Remaining</div><div class="stat-val" id="s-remaining">0</div></div>
+      <div class="stat-card"><div class="stat-label">Qualified</div><div class="stat-val" id="s-qualified">0 / 0</div></div>
     </div>
 
-    <div class="section-title"><i class="ti ti-trophy"></i>Standings</div>
-    <div class="table-scroll">
-      <table id="standings-table">
-        <thead>
-          <tr>
-            <th class="left">#&nbsp;&nbsp;Player</th>
-            <th>W</th><th>D</th><th>L</th>
-            <th>Round W</th>
-            <th>Pts</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="standings-body"></tbody>
-      </table>
+    <div id="board-content">
+      <div class="empty-state">
+        <i class="ti ti-swords"></i>
+        Add at least 2 players above to generate the leaderboard and match grid.
+      </div>
     </div>
-
-    <div class="section-title"><i class="ti ti-swords"></i>Match grid — tap a cell to record result</div>
-    <div class="legend">
-      <span><span class="dot dot-w"></span>Win (3 pts)</span>
-      <span><span class="dot dot-d"></span>Draw (1 pt each)</span>
-      <span><span class="dot dot-l"></span>Loss (0 pts)</span>
-    </div>
-    <div class="table-scroll">
-      <table class="matchup-table" id="match-grid"></table>
-    </div>
-
-    <div class="qualified-bar" id="qualified-bar"></div>
 
     <div class="actions">
-      <button class="reset-btn" onclick="resetAll()"><i class="ti ti-refresh"></i>Reset all results</button>
+      <button class="reset-btn" onclick="resetResults()"><i class="ti ti-refresh"></i>Reset results</button>
     </div>
   </div>
 
@@ -371,11 +471,81 @@
 </div>
 
 <script>
-const PLAYERS = ["Amani","Umayanga","Rasheed","Lasith","Azwer"];
-const N = PLAYERS.length;
-let results = {};
-let roundWins = {};
+const STORAGE_KEY = 'mkx_tracker_state_v1';
 
+let PLAYERS = ["Amani","Umayanga","Rasheed","Lasith","Azwer"];
+let results = {};
+
+// ── Persistence (localStorage) ───────────────────────
+function saveState(){
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ players: PLAYERS, results }));
+  } catch(e) { /* storage unavailable, ignore */ }
+}
+function loadState(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(Array.isArray(parsed.players)) PLAYERS = parsed.players;
+      if(parsed.results && typeof parsed.results === 'object') results = parsed.results;
+    }
+  } catch(e) { /* ignore corrupt storage */ }
+}
+
+// ── Player management ────────────────────────────────
+function normalizeName(n){ return n.trim().replace(/\s+/g,' '); }
+
+function addPlayer(){
+  const input = document.getElementById('player-input');
+  const hint = document.getElementById('form-hint');
+  const name = normalizeName(input.value);
+  hint.textContent = '';
+  hint.className = 'form-hint';
+
+  if(!name){ hint.textContent = 'Enter a name first.'; hint.className = 'form-hint error'; return; }
+  if(name.length > 30){ hint.textContent = 'Name too long (max 30 characters).'; hint.className = 'form-hint error'; return; }
+  if(PLAYERS.some(p => p.toLowerCase() === name.toLowerCase())){
+    hint.textContent = 'That player is already on the list.';
+    hint.className = 'form-hint error';
+    return;
+  }
+
+  PLAYERS.push(name);
+  input.value = '';
+  saveState();
+  renderAll();
+  input.focus();
+}
+
+function removePlayer(name){
+  PLAYERS = PLAYERS.filter(p => p !== name);
+  // Clean up any recorded results involving this player
+  Object.keys(results).forEach(k => {
+    if(k.split(':').includes(name)) delete results[k];
+  });
+  saveState();
+  renderAll();
+}
+
+function renderChips(){
+  const wrap = document.getElementById('player-chips');
+  document.getElementById('player-count-badge').textContent = PLAYERS.length;
+  if(PLAYERS.length === 0){
+    wrap.innerHTML = '<span style="font-size:13px;color:var(--text-muted)">No players added yet.</span>';
+    return;
+  }
+  wrap.innerHTML = PLAYERS.map(p => `
+    <span class="chip">${escapeHtml(p)}<button onclick="removePlayer('${escapeAttr(p)}')" title="Remove ${escapeAttr(p)}"><i class="ti ti-x"></i></button></span>
+  `).join('');
+}
+
+function escapeHtml(str){
+  return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function escapeAttr(str){ return escapeHtml(str).replace(/'/g, "\\'"); }
+
+// ── Match logic (works for any number of players) ────
 function key(a,b){ return a<b?a+':'+b:b+':'+a; }
 
 function getResult(a,b){
@@ -411,7 +581,6 @@ function calcStats(){
       else { stats[a].d++; stats[a].pts+=1; stats[b].d++; stats[b].pts+=1; }
     });
   });
-  Object.keys(roundWins).forEach(p=>{ if(stats[p]) stats[p].rw=roundWins[p]||0; });
   return stats;
 }
 
@@ -421,26 +590,31 @@ function countPlayed(){
   return played;
 }
 
+function qualifySlots(){
+  // Top 3 qualify by default, but scale down for very small groups
+  return Math.min(3, PLAYERS.length);
+}
+
 function renderStandings(stats){
   const sorted=PLAYERS.slice().sort((a,b)=>{
     if(stats[b].pts!==stats[a].pts) return stats[b].pts-stats[a].pts;
     if(stats[b].w!==stats[a].w) return stats[b].w-stats[a].w;
-    return stats[b].rw-stats[a].rw;
+    return 0;
   });
+  const qSlots = qualifySlots();
   const tbody=document.getElementById('standings-body');
   tbody.innerHTML='';
   sorted.forEach((p,i)=>{
     const rank=i+1;
-    const qualified=rank<=3;
+    const qualified=rank<=qSlots;
     const s=stats[p];
     const tr=document.createElement('tr');
     if(qualified) tr.className='selected';
     tr.innerHTML=`
-      <td class="name-cell"><span class="rank-badge rank-${rank<=3?rank:'other'}">${rank}</span>${p}</td>
+      <td class="name-cell"><span class="rank-badge rank-${rank<=3?rank:'other'}">${rank}</span>${escapeHtml(p)}</td>
       <td>${s.w}</td>
       <td>${s.d}</td>
       <td>${s.l}</td>
-      <td>${s.rw}</td>
       <td><strong>${s.pts}</strong></td>
       <td>${qualified?'<span class="status-qualified"><i class="ti ti-check"></i>Qualified</span>':'<span class="status-pending">&mdash;</span>'}</td>
     `;
@@ -451,23 +625,25 @@ function renderStandings(stats){
 function renderGrid(){
   const grid=document.getElementById('match-grid');
   let html='<tr><th></th>';
-  PLAYERS.forEach(p=>{ html+=`<th>${p.replace('Player ','P')}</th>`; });
+  PLAYERS.forEach(p=>{ html+=`<th>${escapeHtml(shortName(p))}</th>`; });
   html+='</tr>';
   PLAYERS.forEach((a,ai)=>{
-    html+=`<tr><th style="text-align:left;padding-left:10px">${a.replace('Player ','P')}</th>`;
+    html+=`<tr><th style="text-align:left;padding-left:10px">${escapeHtml(shortName(a))}</th>`;
     PLAYERS.forEach((b,bi)=>{
       if(ai===bi){ html+='<td class="cell-self">&mdash;</td>'; return; }
       const r=getResult(a,b);
-      let cls=''; 
+      let cls='';
       if(r==='W'){ cls='win'; }
       else if(r==='L'){ cls='loss'; }
       else if(r==='D'){ cls='draw'; }
-      html+=`<td><button class="result-btn ${cls}" onclick="cycleResult('${a}','${b}')">${r||'&middot;'}</button></td>`;
+      html+=`<td><button class="result-btn ${cls}" onclick="cycleResult('${escapeAttr(a)}','${escapeAttr(b)}')">${r||'&middot;'}</button></td>`;
     });
     html+='</tr>';
   });
   grid.innerHTML=html;
 }
+
+function shortName(p){ return p.length > 10 ? p.slice(0,9)+'…' : p; }
 
 function cycleResult(a,b){
   const cur=getResult(a,b);
@@ -475,38 +651,99 @@ function cycleResult(a,b){
   else if(cur==='W'){ setResult(a,b,'D'); }
   else if(cur==='D'){ setResult(a,b,'L'); }
   else { clearResult(a,b); }
-  render();
+  saveState();
+  renderBoard();
 }
 
-function render(){
+function renderBoard(){
+  const boardWrap = document.getElementById('board-content');
+  const n = PLAYERS.length;
+
+  if(n < 2){
+    boardWrap.innerHTML = `
+      <div class="empty-state">
+        <i class="ti ti-swords"></i>
+        Add at least 2 players above to generate the leaderboard and match grid.
+      </div>`;
+    document.getElementById('s-total').textContent = 0;
+    document.getElementById('s-played').textContent = 0;
+    document.getElementById('s-remaining').textContent = 0;
+    document.getElementById('s-qualified').textContent = `0 / ${qualifySlots()}`;
+    return;
+  }
+
+  boardWrap.innerHTML = `
+    <div class="section-title"><i class="ti ti-trophy"></i>Standings</div>
+    <div class="table-scroll">
+      <table id="standings-table">
+        <thead>
+          <tr>
+            <th class="left">#&nbsp;&nbsp;Player</th>
+            <th>W</th><th>D</th><th>L</th>
+            <th>Pts</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="standings-body"></tbody>
+      </table>
+    </div>
+
+    <div class="section-title"><i class="ti ti-swords"></i>Match grid — tap a cell to record result</div>
+    <div class="legend">
+      <span><span class="dot dot-w"></span>Win (3 pts)</span>
+      <span><span class="dot dot-d"></span>Draw (1 pt each)</span>
+      <span><span class="dot dot-l"></span>Loss (0 pts)</span>
+    </div>
+    <div class="table-scroll">
+      <table class="matchup-table" id="match-grid"></table>
+    </div>
+
+    <div class="qualified-bar" id="qualified-bar"></div>
+  `;
+
   const stats=calcStats();
   const played=countPlayed();
-  const total=N*(N-1)/2;
+  const total=n*(n-1)/2;
+  const qSlots = qualifySlots();
+
   document.getElementById('s-total').textContent=total;
   document.getElementById('s-played').textContent=played;
   document.getElementById('s-remaining').textContent=total-played;
+  document.getElementById('s-qualified').textContent=(played===total?qSlots:'?')+' / '+qSlots;
+
   renderStandings(stats);
   renderGrid();
 
   const sorted=PLAYERS.slice().sort((a,b)=>stats[b].pts-stats[a].pts||stats[b].w-stats[a].w);
-  document.getElementById('s-qualified').textContent=(played===total?'3':'?')+' / 3';
-
   const bar=document.getElementById('qualified-bar');
-  if(played===total){
+  if(played===total && total>0){
     bar.className='qualified-bar show';
-    bar.innerHTML=`<i class="ti ti-trophy"></i><span><strong>Selection complete!</strong> Qualified players: <strong>${sorted[0]}</strong>, <strong>${sorted[1]}</strong>, <strong>${sorted[2]}</strong></span>`;
+    const names = sorted.slice(0,qSlots).map(p=>`<strong>${escapeHtml(p)}</strong>`).join(', ');
+    bar.innerHTML=`<i class="ti ti-trophy"></i><span><strong>Selection complete!</strong> Qualified player${qSlots>1?'s':''}: ${names}</span>`;
   } else {
     bar.className='qualified-bar';
   }
 }
 
-function resetAll(){
+function resetResults(){
   results={};
-  roundWins={};
-  render();
+  saveState();
+  renderBoard();
 }
 
-render();
+function renderAll(){
+  renderChips();
+  renderBoard();
+}
+
+// Enter key support
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('player-input').addEventListener('keydown', e => {
+    if(e.key === 'Enter'){ e.preventDefault(); addPlayer(); }
+  });
+  loadState();
+  renderAll();
+});
 </script>
 
 </body>
